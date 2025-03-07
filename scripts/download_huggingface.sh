@@ -69,6 +69,7 @@ fi
 [[ -d "hf_home/" ]] && chmod -R u+w hf_home/
 
 _RETRY=$((_RETRY+1))
+_ERR=0
 
 while [[ $_RETRY -gt 0 ]]
 do
@@ -77,8 +78,10 @@ do
 ${_LOGIN}
 import datasets
 datasets.load_dataset('${_DATASET}'${_NAME}, revision='${_REVISION}', keep_in_memory=False)
-" && _RETRY=0
+" && _RETRY=0 || _ERR=$?
 done
+
+exit_on_error_code --err ${_ERR} "Failed to download dataset ['${_DATASET}'${_NAME}, revision='${_REVISION}']"
 
 # Remove cached source data
 rm -rf hf_home/{hub/,modules/,stored_tokens,token}
