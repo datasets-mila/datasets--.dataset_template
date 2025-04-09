@@ -72,14 +72,14 @@ do
 		printf "%d\t%s\n" "$fc" "$d" >>.tmp/files_count.stats
 	fi
 
-	du=$(find "$d" -maxdepth 1 -type f | xargs -r du -c | tail -n1 | cut -f1)
+	du=$(find "$d" -maxdepth 1 -type f -print0 | du -c --files0-from - | tail -n1 | cut -f1)
 	if [[ ! -z "$du" ]]
 	then
 		printf "%d\t%s\n" "$du" "$d" >>.tmp/disk_usage.stats
 	fi
 
-	find "$d" -maxdepth 1 -type f | xargs chmod a-w "$d"
-	find "$d" -maxdepth 1 -type d | xargs chmod ug+w "$d"
+	find "$d" -maxdepth 1 -type f -print0 | xargs -0 chmod a-w "$d"
+	find "$d" -maxdepth 1 -type d -print0 | xargs -0 chmod ug+w "$d"
 done
 
 rm -f files_count.stats
